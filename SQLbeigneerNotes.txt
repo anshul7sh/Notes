@@ -1,0 +1,277 @@
+- Database:- Any colection of related information.
+- Database Management System(DMS):- A special software progra that helps users to create and maintain a database.
+- C.R.U.D-> Create:Read:Update:Delete.
+- Relation Database(SQL):- In these data is organise in one or more tables.
+- Non-Relational Database(noSQL):- In these data is not organise in tables. Can be organised in Documents,graphs,etc..
+- in relational database  a unique id is provided to manipulate the data.
+- SQL=Structured Query Language.
+- SQL is language for interacting RDMS.
+- Database Queries:- These are request made to database management system for specific information.
+- SQL-4 Types:-1.Data Query Language.
+				    2. Data Defination Language.
+				    3. Data Control Language.
+				    4. Data Manipulation Language.
+- Data types in SQL:- 1.INT->Whole Numbers.
+						2.Decimal(M,N)->Decimal Value -Exact Value. M represents total number of digits to store (including before and after point) and N represents places after decimal.
+						3. VARCHAR(x)->String of text length x.
+						4. BLOB->Binary lagre object.
+						5.DATE->"YYYY-MM-DD".
+						6.TIMESTAP->"YYYY-MM-DD  HH:MM:SS".
+- To create table:- 
+	CREATE TABLE {NAME TO THE TABLE LIKE student}(
+			student_id INT UNIQUE,
+			name VARCHAR(20) NOT NULL,
+			major VARCHAR(20),
+			PRIMARY KEY(student_id)
+	};
+- If any value is not specifies than we can make it default as follows:-
+		major VARCHAR(20) DEFAULT 'undecided' ,
+
+- AUTO _INCREMENT is also used so that we will not put id values again and again as follows:-
+		student_id INT AUTO_INCREM
+- To describe table:-  DESCRIBE student;
+- To add a column:- ALTER TABLE student gpa DECIMAL(3,2);
+- To remove a column:- ALTER TABLE student DROP COLUMN gpa;
+- To drop table:- DROP TABLE student;
+-   To Insert In A Table:-
+- INSERT INTO student VALUES(1,'Jack','Biology');
+- INSERT INTO student VALUES(2,'claire','Sociology');
+- INSERT INTO student(student_id, name) VALUES(3,'Jacky',);----In this in place of major NULL is stored.
+- TO DISPLAY TABLE:-
+- SELECT * FROM student;------It displays all information of the table.
+- UPDATE TABLE:-
+- UPDATE student
+	   SET major='Bio'
+	   WHERE  major='Biology' ;
+- UPDATE student
+	   SET major='Bio'
+	   WHERE  student_id= 3 ;
+- UPDATE student
+	   SET major='Biochemistry'
+	   WHERE  major='Biology' OR major='Chemistry' ;
+- UPDATE student
+	   SET name='Tom' , major='Undecided'
+	   WHERE  student_id= 3 ;
+- DELETE ROW:-
+- DELETE FROM student
+	  WHERE student_id=3 ;
+- DELETE FROM student
+	  WHERE name='Tom' AND major='undecided' ;
+- BASIC QUERIES:-
+- SELECT * FROM student ;-----here * represents all information.
+- you can also do if only one information is required like as:- 
+- SELECT name FROM student ;
+- You can do in also order as follows:-
+- SELECT * FROM student ORDER BY student-id DESC;-----for descending order,
+- SELECT * FROM student ORDER BY student-id ASC;-----for ascending order,---ASC is not required as by default list will sort according to ascending value. 
+- SELECT * FROM student ORDER BY  major; , student_id----can be done as follows to first sort with major and than with student_id if someone has sam major.
+- SELECT * FROM student LIMIT 2;---This is used to put liit that how much you will require to show.
+- If want to show of particulr type than it can be done as follows:-
+		SELECT * FROM student 
+		WHERE major='Chemistry';
+- Other Operators are as:-
+1. <  --Less than.
+2. >  --Greater than.
+3. <=  --Less than or equal to.
+4. >=  --Greater than or equal to.
+5. =  --Equal to.
+6. <>  --Not equal to.
+7. AND  --To include both conditions.
+8. OR  --True if any one of the condition is true.
+- SELECT * FROM student WHERE name IN ('Mike', 'Claire', 'Jack');--this is used to remove the repeted use of OR operator.
+- SELECT * FROM student WHERE name IN ('Mike', 'Claire', 'Jack') AND student_id >2 ;--- To mix conditions.
+- COMPLEX DATA BASE SCHEMA:-
+- CREATING TABLES:-
+```
+CREATE TABLE employee (
+  emp_id INT PRIMARY KEY,
+  first_name VARCHAR(40),
+  last_name VARCHAR(40),
+  birth_day DATE,
+  sex VARCHAR(1),
+  salary INT,
+  super_id INT,
+  branch_id INT,
+  FOREIGN KEY(branch_id)
+  REFERENCES branch(branch_id)
+  ON DELETE SET NULL,
+  FOREIGN KEY(super_id)
+  REFERENCES employee(emp_id)
+  ON DELETE SET NULL
+);
+
+```
+
+```
+CREATE TABLE branch (
+  branch_id INT PRIMARY KEY,
+  branch_name VARCHAR(40),
+  mgr_id INT,
+  mgr_start_date DATE,
+  FOREIGN KEY(mgr_id) REFERENCES employee(emp_id) ON DELETE SET NULL
+);
+
+```
+
+```
+CREATE TABLE client (
+  client_id INT PRIMARY KEY,
+  client_name VARCHAR(40),
+  branch_id INT,
+  FOREIGN KEY(branch_id) REFERENCES branch(branch_id) ON DELETE SET NULL
+);
+```
+
+```
+CREATE TABLE works_with (
+  emp_id INT,
+  client_id INT,
+  total_sales INT,
+  PRIMARY KEY(emp_id, client_id),
+  FOREIGN KEY(emp_id) REFERENCES employee(emp_id) ON DELETE CASCADE,
+  FOREIGN KEY(client_id) REFERENCES client(client_id) ON DELETE CASCADE
+);
+
+```
+
+```
+CREATE TABLE branch_supplier (
+  branch_id INT,
+  supplier_name VARCHAR(40),
+  supply_type VARCHAR(40),
+  PRIMARY KEY(branch_id, supplier_name),
+  FOREIGN KEY(branch_id) REFERENCES branch(branch_id) ON DELETE CASCADE
+);
+
+```
+- INSERING INFORMATION INTO TABLES:-
+```
+--CORPORATE
+INSERT INTO employee VALUES(100, 'David', 'Wallace', '1967-11-17', 'M', 250000, NULL, NULL);
+INSERT INTO branch VALUES(1, 'Corporate', 100, '2006-02-09');
+
+UPDATE employee
+SET branch_id = 1
+WHERE emp_id = 100;
+
+INSERT INTO employee VALUES(101, 'Jan', 'Levinson', '1961-05-11', 'F', 110000, 100, 1);
+```
+
+```
+-- Scranton
+INSERT INTO employee VALUES(102, 'Michael', 'Scott', '1964-03-15', 'M', 75000, 100, NULL);
+
+INSERT INTO branch VALUES(2, 'Scranton', 102, '1992-04-06');
+
+UPDATE employee
+SET branch_id = 2
+WHERE emp_id = 102;
+
+INSERT INTO employee VALUES(103, 'Angela', 'Martin', '1971-06-25', 'F', 63000, 102, 2);
+INSERT INTO employee VALUES(104, 'Kelly', 'Kapoor', '1980-02-05', 'F', 55000, 102, 2);
+INSERT INTO employee VALUES(105, 'Stanley', 'Hudson', '1958-02-19', 'M', 69000, 102, 2);
+```
+
+```
+INSERT INTO employee VALUES(106, 'Josh', 'Porter', '1969-09-05', 'M', 78000, 100, NULL);
+
+INSERT INTO branch VALUES(3, 'Stamford', 106, '1998-02-13');
+
+UPDATE employee
+SET branch_id = 3
+WHERE emp_id = 106;
+
+INSERT INTO employee VALUES(107, 'Andy', 'Bernard', '1973-07-22', 'M', 65000, 106, 3);
+INSERT INTO employee VALUES(108, 'Jim', 'Halpert', '1978-10-01', 'M', 71000, 106, 3);
+```
+
+```
+-- BRANCH SUPPLIER
+INSERT INTO branch_supplier VALUES(2, 'Hammer Mill', 'Paper');
+INSERT INTO branch_supplier VALUES(2, 'Uni-ball', 'Writing Utensils');
+INSERT INTO branch_supplier VALUES(3, 'Patriot Paper', 'Paper');
+INSERT INTO branch_supplier VALUES(2, 'J.T. Forms & Labels', 'Custom Forms');
+INSERT INTO branch_supplier VALUES(3, 'Uni-ball', 'Writing Utensils');
+INSERT INTO branch_supplier VALUES(3, 'Hammer Mill', 'Paper');
+INSERT INTO branch_supplier VALUES(3, 'Stamford Lables', 'Custom Forms');
+```
+
+```
+-- CLIENT
+INSERT INTO client VALUES(400, 'Dunmore Highschool', 2);
+INSERT INTO client VALUES(401, 'Lackawana Country', 2);
+INSERT INTO client VALUES(402, 'FedEx', 3);
+INSERT INTO client VALUES(403, 'John Daly Law, LLC', 3);
+INSERT INTO client VALUES(404, 'Scranton Whitepages', 2);
+INSERT INTO client VALUES(405, 'Times Newspaper', 3);
+INSERT INTO client VALUES(406, 'FedEx', 2);
+```
+
+```
+-- WORKS_WITH
+INSERT INTO works_with VALUES(105, 400, 55000);
+-NSERT INTO works_with VALUES(102, 401, 267000);-
+INSERT INTO works_with VALUES(108, 402, 22500);
+INSERT INTO works_with VALUES(107, 403, 5000);
+INSERT INTO works_with VALUES(108, 403, 12000);
+INSERT INTO works_with VALUES(105, 404, 33000);
+INSERT INTO works_with VALUES(107, 405, 26000);
+INSERT INTO works_with VALUES(102, 406, 15000);
+INSERT INTO works_with VALUES(105, 406, 130000);
+```
+- SOME MORE BASIC QUERIES:-
+- To change the name of the column as to show in the table we can do as follows:-
+- SELECT first_name AS forename, last_name AS surname FROM employee;
+- SELECT DISTINCT sex FROM employee;-------this can be used to generate than which different types of sexes are present in the employees.
+- FUNCTIONS:-
+-  SELECT COUNT(emp_id) FROM employee; ----this is used to calculate that how many employees are their in the companey.
+- SELECT COUNT(emp_id ) FROM employee WHERE sex='F' AND birth_date >= '1971-01-01';---this is used to calculate number of females employees born after 1970.
+- SELECT AVG(salary) FROM empolyee;---To calculate avg also conditions can be applied using 
+- SELECT SUM(salary) FROM employee;---Using this we can calculate sum of salary.
+- SELECT COUNT(sex), sex FROM empolyee GROUP BY sex;--using this we can calculate that how male and female people are there in the companey.
+- SELECT SUM(total_sales), emp_id FROM works_with GROUP BY emp_id;---to calculate total sales of salesman.
+- WILDCARD:-
+- it is defining as different  pattern to match specific pieces of data to.
+- SELECT *FROM client WHERE client-name LIKE '%LLC';-- By this we are doing to find the the client with LLc ans a name 
+- % is used for any number of characters while _ is used for only one character.
+- SELECT *FROM client WHERE client-name LIKE '%school%'--By this we are doing to find the the client which is client name inclue school
+- UNION:-
+- To combine results of multiple select states into one.
+- Number of columns should be same and of same data type.
+- SELECT first_name FROM employee UNION SELECT branch_name FROM branch;--- This is the syntax to use union.
+- JOINS:-
+- Use to combine rows from two or more table based on related column between them.
+```
+SELECT employee.emp_id, employee.first_name, branch.branch_name
+FROM employee
+JOIN branch
+ON employee.emp_id = branch.mgr_id;
+```
+- LEFT JOIN-- By using ths all elements in the first or left table were included.
+- RIGHT JOIN-- By using ths all elements in the second or right table were included.
+- FULL JOIN = LEFT JOIN +RIGHT JOIN.
+- NESTED QUERIES:-
+- 
+```
+-- Find names of all employees who have sold over 50,000
+SELECT employee.first_name, employee.last_name
+FROM employee
+WHERE employee.emp_id IN (SELECT works_with.emp_id
+                          FROM works_with
+                          WHERE works_with.total_sales > 50000);
+```
+
+```
+-- Find all clients who are handles by the branch that Michael Scott manages
+-- Assume you know Michael's ID
+SELECT client.client_id, client.client_name
+FROM client
+WHERE client.branch_id = (SELECT branch.branch_id
+                          FROM branch
+                          WHERE branch.mgr_id = 102);
+```
+- ON DELETE:-
+- ON DELETE SET NULL- According to this if any data is deleted such that it occurs in other tables than that table is than seted null.
+- ON DELETE CASCADE- IN this if any data is deleted such that it occurs in other tables than that row in that table will be deleted completely.
+- ON DELETE SET NULL--EXAMPLE:-DELETE FROM employee WHERE emp_id =102;--BY this we can delete 102 member from the table.
+- ON DELETE CASCADE--EXAMPLE:- DELETE FROM branch WHERE branch_id=2;--BY this all rows having branch_id =2 were deleted from all tables.
